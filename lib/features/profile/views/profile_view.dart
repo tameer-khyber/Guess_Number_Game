@@ -55,52 +55,50 @@ class ProfileView extends StatelessWidget {
 
   /// Build background with gradient and orbs
   Widget _buildBackground(bool isDark) {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isDark
-              ? DarkColors.backgroundGradient
-              : LightColors.backgroundGradient,
-        ),
-      ),
-      child: Stack(
-        children: [
-          // Orb 1
-          Positioned(
-            top: -0.05.sh,
-            right: -0.1.sw,
-            child: Container(
-              width: 288.w,
-              height: 288.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isDark
-                    ? const Color(0xFF00E5FF).withOpacity(0.1)
-                    : const Color(0xFF4CAF50).withOpacity(0.15),
-              ),
+    return GetBuilder<ThemeController>(
+      builder: (themeCtrl) {
+        return Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: themeCtrl.backgroundGradient,
             ),
           ),
-          // Orb 2
-          Positioned(
-            bottom: 0.3.sh,
-            left: -0.08.sw,
-            child: Container(
-              width: 224.w,
-              height: 224.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isDark
-                    ? const Color(0xFF00E5FF).withOpacity(0.08)
-                    : const Color(0xFF2196F3).withOpacity(0.12),
+          child: Stack(
+            children: [
+              // Orb 1
+              Positioned(
+                top: -0.05.sh,
+                right: -0.1.sw,
+                child: Container(
+                  width: 288.w,
+                  height: 288.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: themeCtrl.accent.withOpacity(0.1),
+                  ),
+                ),
               ),
-            ),
+              // Orb 2
+              Positioned(
+                bottom: 0.3.sh,
+                left: -0.08.sw,
+                child: Container(
+                  width: 224.w,
+                  height: 224.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: themeCtrl.secondary.withOpacity(0.08),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 

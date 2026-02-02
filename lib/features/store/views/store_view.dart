@@ -56,70 +56,64 @@ class StoreView extends StatelessWidget {
     );
   }
 
-  /// Build background
+  /// Build background with gradient and orbs
   Widget _buildBackground(bool isDark) {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isDark
-              ? DarkColors.backgroundGradient
-              : LightColors.backgroundGradient,
-        ),
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            top: 0.1.sh,
-            right: -0.2.sw,
-            child: Container(
-              width: 300.w,
-              height: 300.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isDark
-                    ? const Color(0xFF9C27B0).withOpacity(0.1)
-                    : const Color(0xFFFF9800).withOpacity(0.15),
-                boxShadow: [
-                  BoxShadow(
-                    color: isDark
-                        ? const Color(0xFF9C27B0).withOpacity(0.05)
-                        : const Color(0xFFFF9800).withOpacity(0.1),
-                    blurRadius: 60,
-                    spreadRadius: 20,
-                  ),
-                ],
-              ),
+    return GetBuilder<ThemeController>(
+      builder: (themeCtrl) {
+        return Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: themeCtrl.backgroundGradient,
             ),
           ),
-          Positioned(
-            bottom: -0.1.sh,
-            left: -0.1.sw,
-            child: Container(
-              width: 250.w,
-              height: 250.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isDark
-                    ? const Color(0xFF00E5FF).withOpacity(0.08)
-                    : const Color(0xFF2196F3).withOpacity(0.12),
-                boxShadow: [
-                  BoxShadow(
-                    color: isDark
-                        ? const Color(0xFF00E5FF).withOpacity(0.05)
-                        : const Color(0xFF2196F3).withOpacity(0.1),
-                    blurRadius: 50,
-                    spreadRadius: 15,
+          child: Stack(
+            children: [
+              Positioned(
+                top: 0.1.sh,
+                right: -0.2.sw,
+                child: Container(
+                  width: 300.w,
+                  height: 300.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: themeCtrl.accent.withOpacity(0.1),
+                    boxShadow: [
+                      BoxShadow(
+                        color: themeCtrl.accent.withOpacity(0.05),
+                        blurRadius: 60,
+                        spreadRadius: 20,
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+              Positioned(
+                bottom: -0.1.sh,
+                left: -0.1.sw,
+                child: Container(
+                  width: 250.w,
+                  height: 250.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: themeCtrl.secondary.withOpacity(0.08),
+                    boxShadow: [
+                      BoxShadow(
+                        color: themeCtrl.secondary.withOpacity(0.05),
+                        blurRadius: 50,
+                        spreadRadius: 15,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -329,7 +323,7 @@ class StoreView extends StatelessWidget {
         child: Stack(
           children: [
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Item Icon
                 Expanded(
@@ -387,6 +381,7 @@ class StoreView extends StatelessWidget {
                       )
                     else
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text('💎', style: TextStyle(fontSize: 10.sp)),
                           SizedBox(width: 4.w),
@@ -583,8 +578,10 @@ class StoreView extends StatelessWidget {
                               children: [
                                 Expanded(
                                   child: _buildModalButton(
-                                    'Use',
-                                    () => controller.useItem(item),
+                                    item.category == ItemCategory.themes ? 'Use Theme' : 'Use',
+                                    () => item.category == ItemCategory.themes 
+                                        ? controller.useTheme(item)
+                                        : controller.useItem(item),
                                     isDark,
                                     isPrimary: true,
                                   ),

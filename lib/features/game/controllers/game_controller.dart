@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:get/get.dart';
+import '../../dashboard/controllers/leaderboard_controller.dart';
+import '../../dashboard/controllers/rewards_controller.dart';
 
 /// Controller for managing number guessing game logic
 class GameController extends GetxController {
@@ -23,13 +25,15 @@ class GameController extends GetxController {
   // Power-ups
   final RxInt hintPowerUps = 2.obs;
   final RxInt freezePowerUps = 1.obs;
-  final RxInt skipPowerUps = 1.obs;
+  final RxInt lifePowerUps = 0.obs;
+  final RxInt skipPowerUps = 0.obs; // Deprecated/Unused
   
   Timer? _gameTimer;
   
   @override
   void onInit() {
     super.onInit();
+    _syncPowerUps();
     _generateNewTarget();
     _startTimer();
   }
@@ -38,6 +42,18 @@ class GameController extends GetxController {
   void onClose() {
     _gameTimer?.cancel();
     super.onClose();
+  }
+
+  /// Sync power-ups from RewardsController
+  void _syncPowerUps() {
+    try {
+      final rewardsController = Get.find<RewardsController>();
+      hintPowerUps.value = rewardsController.hintPowerUps.value;
+      freezePowerUps.value = rewardsController.freezePowerUps.value;
+      lifePowerUps.value = rewardsController.lifePowerUps.value;
+    } catch (e) {
+      // RewardsController not ready
+    }
   }
   
   /// Generate new random target number
@@ -119,6 +135,14 @@ class GameController extends GetxController {
     score.value += 100;
     streak.value++;
     showWinModal.value = true;
+    
+    // Update leaderboard with current score
+    try {
+      final leaderboardController = Get.find<LeaderboardController>();
+      leaderboardController.updateUserScore(score.value);
+    } catch (e) {
+      // Leaderboard controller not initialized yet
+    }
   }
   
   /// Lose a life
@@ -130,33 +154,60 @@ class GameController extends GetxController {
     }
   }
   
+  /// Add a life (from power-up)
+  void addLife() {
+    lives.value++;
+  }
+  
   /// Use hint power-up
   void useHintPowerUp() {
-    if (hintPowerUps.value <= 0) return;
-    
-    hintPowerUps.value--;
-    
-    // Give range hint
-    final range = targetNumber.value > 50 ? '51-99' : '1-50';
-    hint.value = 'range:$range';
+    try {
+      final rewardsController = Get.find<RewardsController>();
+      if (rewardsController.usePowerUp('hint')) {
+        hintPowerUps.value = rewardsController.hintPowerUps.value;
+        
+        // Give range hint
+        final range = targetNumber.value > 50 ? '51-99' : '1-50';
+        hint.value = 'range:$range';
+      }
+    } catch (e) {
+      // Controller not found
+    }
   }
   
   /// Use freeze power-up (adds time)
   void useFreezePowerUp() {
-    if (freezePowerUps.value <= 0) return;
-    
-    freezePowerUps.value--;
-    timer.value += 15;
+    try {
+      final rewardsController = Get.find<RewardsController>();
+      if (rewardsController.usePowerUp('freeze')) {
+        freezePowerUps.value = rewardsController.freezePowerUps.value;
+        timer.value += 15;
+      }
+    } catch (e) {
+      // Controller not found
+    }
   }
   
-  /// Use skip power-up
+  /// Use Add Life power-up (replaces skip)
+  void useAddLifePowerUp() {
+    try {
+      final rewardsController = Get.find<RewardsController>();
+      if (rewardsController.usePowerUp('life')) {
+         lifePowerUps.value = rewardsController.lifePowerUps.value;
+         lives.value++;
+      }
+    } catch (e) {
+      // Fallback
+    }
+  }
+  
+  /// Use skip power-up (Deprecated, redirects to new game)
   void useSkipPowerUp() {
-    if (skipPowerUps.value <= 0) return;
-    
-    skipPowerUps.value--;
-    
-    // Skip to new game
-    handleNewGame();
+     // Keeping method signature if needed, but not using it.
+     // Or redirect to logic if needed. 
+     // For now, no-op or just new game if forced?
+     // Let's just handle new game logic if it was called, but UI shouldn't call it.
+     handleNewGame();
   }
   
   /// Toggle pause menu

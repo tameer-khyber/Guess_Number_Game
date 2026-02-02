@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import '../../game/views/game_view.dart';
 import '../../store/views/store_view.dart';
+import '../views/leaderboard_view.dart';
+import '../views/rewards_view.dart';
 
 /// Controller for managing dashboard state and interactions
 class DashboardController extends GetxController {
@@ -65,6 +67,18 @@ class DashboardController extends GetxController {
     } else if (menuId == 'store') {
       Get.to(
         () => const StoreView(),
+        transition: Transition.fadeIn,
+        duration: const Duration(milliseconds: 400),
+      );
+    } else if (menuId == 'leaderboard') {
+      Get.to(
+        () => const LeaderboardView(),
+        transition: Transition.fadeIn,
+        duration: const Duration(milliseconds: 400),
+      );
+    } else if (menuId == 'rewards') {
+      Get.to(
+        () => const RewardsView(),
         transition: Transition.fadeIn,
         duration: const Duration(milliseconds: 400),
       );

@@ -79,94 +79,84 @@ class DashboardView extends StatelessWidget {
 
   /// Build background with gradient and animated orbs
   Widget _buildBackground(bool isDark) {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isDark
-              ? DarkColors.backgroundGradient
-              : LightColors.backgroundGradient,
-        ),
-      ),
-      child: Stack(
-        children: [
-          // Orb 1
-          Positioned(
-            top: -0.1.sh,
-            right: -0.15.sw,
-            child: Container(
-              width: 320.w,
-              height: 320.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isDark
-                    ? const Color(0xFF00E5FF).withOpacity(0.12)
-                    : const Color(0xFF4CAF50).withOpacity(0.2),
-                boxShadow: [
-                  BoxShadow(
-                    color: isDark
-                        ? const Color(0xFF00E5FF).withOpacity(0.1)
-                        : const Color(0xFF4CAF50).withOpacity(0.15),
-                    blurRadius: 80,
-                    spreadRadius: 30,
-                  ),
-                ],
-              ),
+    return GetBuilder<ThemeController>(
+      builder: (themeCtrl) {
+        return Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: themeCtrl.backgroundGradient,
             ),
           ),
-          // Orb 2
-          Positioned(
-            bottom: 0.1.sh,
-            left: -0.1.sw,
-            child: Container(
-              width: 256.w,
-              height: 256.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isDark
-                    ? const Color(0xFF00E5FF).withOpacity(0.08)
-                    : const Color(0xFF2196F3).withOpacity(0.15),
-                boxShadow: [
-                  BoxShadow(
-                    color: isDark
-                        ? const Color(0xFF00E5FF).withOpacity(0.08)
-                        : const Color(0xFF2196F3).withOpacity(0.1),
-                    blurRadius: 70,
-                    spreadRadius: 25,
+          child: Stack(
+            children: [
+              // Orb 1
+              Positioned(
+                top: -0.1.sh,
+                right: -0.15.sw,
+                child: Container(
+                  width: 320.w,
+                  height: 320.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: themeCtrl.accent.withOpacity(0.12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: themeCtrl.accent.withOpacity(0.1),
+                        blurRadius: 80,
+                        spreadRadius: 30,
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-          // Orb 3
-          Positioned(
-            top: 0.4.sh,
-            right: 0.1.sw,
-            child: Container(
-              width: 192.w,
-              height: 192.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isDark
-                    ? const Color(0xFF00E5FF).withOpacity(0.06)
-                    : const Color(0xFFFFC107).withOpacity(0.2),
-                boxShadow: [
-                  BoxShadow(
-                    color: isDark
-                        ? const Color(0xFF00E5FF).withOpacity(0.06)
-                        : const Color(0xFFFFC107).withOpacity(0.12),
-                    blurRadius: 60,
-                    spreadRadius: 20,
+              // Orb 2
+              Positioned(
+                bottom: 0.1.sh,
+                left: -0.1.sw,
+                child: Container(
+                  width: 256.w,
+                  height: 256.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: themeCtrl.secondary.withOpacity(0.08),
+                    boxShadow: [
+                      BoxShadow(
+                        color: themeCtrl.secondary.withOpacity(0.08),
+                        blurRadius: 70,
+                        spreadRadius: 25,
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+              // Orb 3
+              Positioned(
+                top: 0.4.sh,
+                right: 0.1.sw,
+                child: Container(
+                  width: 192.w,
+                  height: 192.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: themeCtrl.primary.withOpacity(0.06),
+                    boxShadow: [
+                      BoxShadow(
+                        color: themeCtrl.primary.withOpacity(0.06),
+                        blurRadius: 60,
+                        spreadRadius: 20,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
