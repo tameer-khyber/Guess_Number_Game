@@ -3,18 +3,19 @@ import 'dart:math';
 import 'package:get/get.dart';
 import '../../dashboard/controllers/leaderboard_controller.dart';
 import '../../dashboard/controllers/rewards_controller.dart';
+import '../../profile/controllers/profile_controller.dart';
 
 /// Controller for managing number guessing game logic
 class GameController extends GetxController {
   // Game state
-  final RxInt score = 250.obs;
+  final RxInt score = 0.obs;
   final RxInt lives = 5.obs;
   final RxInt timer = 60.obs;
   final RxInt targetNumber = 0.obs;
   final RxString currentGuess = ''.obs;
   final Rx<String?> hint = Rx<String?>(null);
   final Rx<int?> lastGuess = Rx<int?>(null);
-  final RxInt streak = 3.obs;
+  final RxInt streak = 0.obs;
   final RxBool isAnimating = false.obs;
   
   // Modal states
@@ -22,18 +23,12 @@ class GameController extends GetxController {
   final RxBool showWinModal = false.obs;
   final RxBool showLoseModal = false.obs;
   
-  // Power-ups
-  final RxInt hintPowerUps = 2.obs;
-  final RxInt freezePowerUps = 1.obs;
-  final RxInt lifePowerUps = 0.obs;
-  final RxInt skipPowerUps = 0.obs; // Deprecated/Unused
   
   Timer? _gameTimer;
   
   @override
   void onInit() {
     super.onInit();
-    _syncPowerUps();
     _generateNewTarget();
     _startTimer();
   }
@@ -44,17 +39,7 @@ class GameController extends GetxController {
     super.onClose();
   }
 
-  /// Sync power-ups from RewardsController
-  void _syncPowerUps() {
-    try {
-      final rewardsController = Get.find<RewardsController>();
-      hintPowerUps.value = rewardsController.hintPowerUps.value;
-      freezePowerUps.value = rewardsController.freezePowerUps.value;
-      lifePowerUps.value = rewardsController.lifePowerUps.value;
-    } catch (e) {
-      // RewardsController not ready
-    }
-  }
+
   
   /// Generate new random target number
   void _generateNewTarget() {
@@ -80,6 +65,19 @@ class GameController extends GetxController {
   void _handleTimeUp() {
     showLoseModal.value = true;
     _gameTimer?.cancel();
+    
+    // Update Profile Stats (Loss)
+    try {
+      final profileController = Get.find<ProfileController>();
+      profileController.updateGameStats(
+        isWin: false, 
+        score: 0, 
+        timeSeconds: 60
+      );
+      streak.value = 0;
+    } catch (e) {
+      print('Error updating profile: $e');
+    }
   }
   
   /// Handle number input from number pad
@@ -143,6 +141,20 @@ class GameController extends GetxController {
     } catch (e) {
       // Leaderboard controller not initialized yet
     }
+    
+    // Update Profile Stats
+    try {
+      final profileController = Get.find<ProfileController>();
+      profileController.updateGameStats(
+        isWin: true, 
+        score: 100, // Points for this single game
+        timeSeconds: 60 - timer.value
+      );
+      // Sync streak
+      streak.value = profileController.currentStreak.value;
+    } catch (e) {
+      print('Error updating profile: $e');
+    }
   }
   
   /// Lose a life
@@ -151,6 +163,19 @@ class GameController extends GetxController {
     if (lives.value <= 0) {
       showLoseModal.value = true;
       _gameTimer?.cancel();
+      
+      // Update Profile Stats (Loss)
+      try {
+        final profileController = Get.find<ProfileController>();
+        profileController.updateGameStats(
+          isWin: false, 
+          score: 0, 
+          timeSeconds: 60 - timer.value
+        );
+        streak.value = 0;
+      } catch (e) {
+        print('Error updating profile: $e');
+      }
     }
   }
   
@@ -164,7 +189,7 @@ class GameController extends GetxController {
     try {
       final rewardsController = Get.find<RewardsController>();
       if (rewardsController.usePowerUp('hint')) {
-        hintPowerUps.value = rewardsController.hintPowerUps.value;
+        // hintPowerUps.value = rewardsController.hintPowerUps.value;
         
         // Give range hint
         final range = targetNumber.value > 50 ? '51-99' : '1-50';
@@ -180,7 +205,7 @@ class GameController extends GetxController {
     try {
       final rewardsController = Get.find<RewardsController>();
       if (rewardsController.usePowerUp('freeze')) {
-        freezePowerUps.value = rewardsController.freezePowerUps.value;
+        // freezePowerUps.value = rewardsController.freezePowerUps.value;
         timer.value += 15;
       }
     } catch (e) {
@@ -193,7 +218,7 @@ class GameController extends GetxController {
     try {
       final rewardsController = Get.find<RewardsController>();
       if (rewardsController.usePowerUp('life')) {
-         lifePowerUps.value = rewardsController.lifePowerUps.value;
+         // lifePowerUps.value = rewardsController.lifePowerUps.value;
          lives.value++;
       }
     } catch (e) {
@@ -201,14 +226,7 @@ class GameController extends GetxController {
     }
   }
   
-  /// Use skip power-up (Deprecated, redirects to new game)
-  void useSkipPowerUp() {
-     // Keeping method signature if needed, but not using it.
-     // Or redirect to logic if needed. 
-     // For now, no-op or just new game if forced?
-     // Let's just handle new game logic if it was called, but UI shouldn't call it.
-     handleNewGame();
-  }
+
   
   /// Toggle pause menu
   void togglePauseMenu() {

@@ -129,14 +129,25 @@ class LeaderboardView extends StatelessWidget {
             ),
           ),
 
-          // Title
-          Text(
-            '🏆 Leaderboard',
-            style: GoogleFonts.poppins(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.bold,
-              color: isDark ? DarkColors.text : LightColors.text,
-            ),
+          // Title and Season Info
+          Column(
+            children: [
+              Text(
+                '🏆 Leaderboard',
+                style: GoogleFonts.poppins(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? DarkColors.text : LightColors.text,
+                ),
+              ),
+              Obx(() => Text(
+                'Season ends: ${controller.seasonTimeRemaining}',
+                style: GoogleFonts.poppins(
+                  fontSize: 10.sp,
+                  color: isDark ? DarkColors.textSecondary : LightColors.textSecondary,
+                ),
+              )),
+            ],
           ),
 
           SizedBox(width: 40.w),
@@ -251,15 +262,18 @@ class LeaderboardView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    entry.username,
-                    style: GoogleFonts.poppins(
-                      fontSize: 16.sp,
-                      fontWeight: isUser ? FontWeight.bold : FontWeight.w600,
-                      color: isDark ? DarkColors.text : LightColors.text,
+                  SizedBox(
+                    width: 70.w, // Limit name width to avoid overflow with rewards
+                    child: Text(
+                      entry.username,
+                      style: GoogleFonts.poppins(
+                        fontSize: 14.sp,
+                        fontWeight: isUser ? FontWeight.bold : FontWeight.w600,
+                        color: isDark ? DarkColors.text : LightColors.text,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
                   if (isUser)
                     Text(
@@ -275,9 +289,15 @@ class LeaderboardView extends StatelessWidget {
 
             SizedBox(width: 8.w),
 
+            // Rewards
+            if (!isUser) 
+              _buildRewards(entry.rank, isDark),
+
+            SizedBox(width: 8.w),
+
             // Score
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12.r),
                 color: (isDark ? DarkColors.accent : LightColors.accent)
@@ -286,12 +306,12 @@ class LeaderboardView extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('⭐', style: TextStyle(fontSize: 14.sp)),
+                  Text('⭐', style: TextStyle(fontSize: 12.sp)),
                   SizedBox(width: 4.w),
                   Text(
                     '${entry.score}',
                     style: GoogleFonts.poppins(
-                      fontSize: 14.sp,
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.bold,
                       color: isDark ? DarkColors.accent : LightColors.accent,
                     ),
@@ -301,6 +321,51 @@ class LeaderboardView extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildRewards(int rank, bool isDark) {
+    String rewardText = '';
+    List<String> icons = [];
+
+    if (rank == 1) {
+      rewardText = '500';
+      icons = ['💎', '🎁'];
+    } else if (rank <= 3) {
+      rewardText = '300';
+      icons = ['💎', '⚡'];
+    } else if (rank <= 10) {
+      rewardText = '150';
+      icons = ['💎'];
+    } else {
+      rewardText = '50';
+      icons = ['💎'];
+    }
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.black26 : Colors.black12,
+        borderRadius: BorderRadius.circular(8.r),
+        border: Border.all(
+          color: isDark ? Colors.white12 : Colors.black12,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ...icons.map((icon) => Text(icon, style: TextStyle(fontSize: 10.sp))),
+          SizedBox(width: 4.w),
+          Text(
+            rewardText,
+            style: GoogleFonts.poppins(
+              fontSize: 10.sp,
+              fontWeight: FontWeight.w600,
+              color: isDark ? DarkColors.textSecondary : LightColors.textSecondary,
+            ),
+          ),
+        ],
       ),
     );
   }

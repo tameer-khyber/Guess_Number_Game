@@ -8,6 +8,7 @@ import '../../../core/widgets/glass_card.dart';
 import '../../../core/themes/dark/dark_colors.dart';
 import '../../../core/themes/light/light_colors.dart';
 import '../../../core/themes/theme_controller.dart';
+import '../../dashboard/controllers/rewards_controller.dart';
 
 /// Main game view with number guessing gameplay
 class GameView extends StatelessWidget {
@@ -667,7 +668,7 @@ class GameView extends StatelessWidget {
             controller,
             '💡',
             'Hint',
-            controller.hintPowerUps,
+            Get.find<RewardsController>().hintPowerUps,
             () => controller.useHintPowerUp(),
             isDark,
           ),
@@ -675,7 +676,7 @@ class GameView extends StatelessWidget {
             controller,
             '❄️',
             '+15s',
-            controller.freezePowerUps,
+            Get.find<RewardsController>().freezePowerUps,
             () => controller.useFreezePowerUp(),
             isDark,
           ),
@@ -683,7 +684,7 @@ class GameView extends StatelessWidget {
             controller,
             '❤️',
             'Life',
-            controller.lifePowerUps,
+            Get.find<RewardsController>().lifePowerUps,
             () => controller.useAddLifePowerUp(),
             isDark,
           ),

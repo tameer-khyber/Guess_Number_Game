@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import '../../profile/controllers/profile_controller.dart';
 import '../../game/views/game_view.dart';
 import '../../store/views/store_view.dart';
 import '../views/leaderboard_view.dart';
@@ -7,15 +8,19 @@ import '../views/rewards_view.dart';
 /// Controller for managing dashboard state and interactions
 class DashboardController extends GetxController {
   // Player stats
-  final RxString playerName = 'Player123'.obs;
-  final RxInt playerLevel = 24.obs;
-  final RxInt playerXP = 12450.obs;
-  final RxInt currency = 2450.obs;
+  // Player stats - from ProfileController
+  RxString get playerName => Get.find<ProfileController>().playerName;
+  RxInt get playerLevel => Get.find<ProfileController>().level;
+  RxInt get playerXP => Get.find<ProfileController>().xp;
   
-  // Stats
-  final RxInt totalGames = 156.obs;
-  final RxInt winRate = 89.obs;
-  final RxInt playerRank = 42.obs;
+  // Currency is still managed here as source of truth for now, or could move to Profile
+  // Keeping currency here as per previous strict instruction, but good to know
+  final RxInt currency = 2500.obs; 
+  
+  // Stats - from ProfileController
+  RxInt get totalGames => Get.find<ProfileController>().gamesPlayed;
+  RxInt get winRate => Get.find<ProfileController>().winRate;
+  RxInt get playerRank => Get.find<ProfileController>().rank;
   
   // Active overlay
   final Rx<String?> activeOverlay = Rx<String?>(null);

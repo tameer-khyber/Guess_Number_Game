@@ -358,45 +358,40 @@ class StoreView extends StatelessWidget {
                 SizedBox(height: 4.h),
                 
                 // Item Price/Status
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    if (item.category == ItemCategory.currency)
-                       Text(
-                        'Real Money',
-                        style: GoogleFonts.poppins(
-                          fontSize: 10.sp,
-                          color: isDark ? Colors.greenAccent : Colors.green,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )
-                    else if (item.isOwned)
+                if (item.category == ItemCategory.currency)
+                   Text(
+                    'Real Money',
+                    style: GoogleFonts.poppins(
+                      fontSize: 10.sp,
+                      color: isDark ? Colors.greenAccent : Colors.green,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
+                else if (item.isOwned)
+                  Text(
+                    'OWNED',
+                    style: GoogleFonts.poppins(
+                      fontSize: 10.sp,
+                      color: isDark ? DarkColors.textSecondary : LightColors.textSecondary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
+                else
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('💎', style: TextStyle(fontSize: 10.sp)),
+                      SizedBox(width: 4.w),
                       Text(
-                        'OWNED',
+                        '${item.price}',
                         style: GoogleFonts.poppins(
-                          fontSize: 10.sp,
-                          color: isDark ? DarkColors.textSecondary : LightColors.textSecondary,
+                          fontSize: 12.sp,
                           fontWeight: FontWeight.bold,
+                          color: isDark ? DarkColors.accent : LightColors.accent,
                         ),
-                      )
-                    else
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text('💎', style: TextStyle(fontSize: 10.sp)),
-                          SizedBox(width: 4.w),
-                          Text(
-                            '${item.price}',
-                            style: GoogleFonts.poppins(
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.bold,
-                              color: isDark ? DarkColors.accent : LightColors.accent,
-                            ),
-                          ),
-                        ],
                       ),
-                  ],
-                ),
+                    ],
+                  ),
               ],
             ),
             

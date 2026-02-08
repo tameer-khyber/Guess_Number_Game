@@ -4,6 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../../../core/themes/theme_controller.dart';
 import '../../game/controllers/game_controller.dart';
 import '../../dashboard/controllers/rewards_controller.dart';
+import '../../dashboard/controllers/dashboard_controller.dart';
 
 /// Item category enum
 enum ItemCategory {
@@ -40,8 +41,8 @@ class StoreItem {
 
 /// Controller for managing store page logic
 class StoreController extends GetxController {
-  // User balance
-  final RxInt balance = 0.obs;
+  // User balance - Now fetched from DashboardController
+  // final RxInt balance = 0.obs; // Removed local state
   
   // Owned items (IDs of purchased items)
   final RxList<String> ownedItems = <String>[].obs;
@@ -65,13 +66,33 @@ class StoreController extends GetxController {
     _loadStoreData();
   }
   
+  /// Get current balance
+  RxInt get balance {
+    try {
+      if (Get.isRegistered<DashboardController>()) {
+        return Get.find<DashboardController>().currency;
+      }
+    } catch(e) { /* ignore */ }
+    return 0.obs;
+  }
+  
+  /// Update balance
+  void updateBalance(int amount) {
+    try {
+      if (Get.isRegistered<DashboardController>()) {
+        final dashboard = Get.find<DashboardController>();
+        dashboard.currency.value = amount;
+      }
+    } catch(e) { /* ignore */ }
+  }
+
   /// Load store data from Hive
   Future<void> _loadStoreData() async {
     try {
       _storeBox = await Hive.openBox('store');
       
-      // Load balance (default 0 for first time)
-      balance.value = _storeBox?.get('balance', defaultValue: 0) ?? 0;
+      // Balance is now managed by DashboardController
+      // balance.value = _storeBox?.get('balance', defaultValue: 0) ?? 0;
       
       // Load owned items
       final List<dynamic>? owned = _storeBox?.get('ownedItems');
@@ -91,7 +112,8 @@ class StoreController extends GetxController {
   /// Save store data to Hive
   Future<void> saveStoreData() async {
     try {
-      await _storeBox?.put('balance', balance.value);
+      // Balance is saved in DashboardController
+      // await _storeBox?.put('balance', balance.value);
       await _storeBox?.put('ownedItems', ownedItems.toList());
     } catch (e) {
       // Handle error silently
@@ -127,16 +149,7 @@ class StoreController extends GetxController {
       category: ItemCategory.powerups,
       badge: 'NEW',
     ),
-    StoreItem(
-      id: 'shield',
-      name: 'Shield',
-      description: 'Protect from one wrong guess. Your safety net!',
-      icon: '🛡️',
-      price: 250,
-      category: ItemCategory.powerups,
-      badge: 'HOT',
-    ),
-    
+
     // Themes - Default themes (Free)
     StoreItem(
       id: 'light_theme',

@@ -5,7 +5,7 @@ import '../../store/controllers/store_controller.dart';
 
 /// Reward item model
 class RewardItem {
-  final String type; // 'diamonds', 'hint', 'freeze', 'skip'
+  final String type; // 'diamonds', 'hint', 'freeze', 'life'
   final int quantity;
   final String icon;
   final String label;
@@ -68,14 +68,23 @@ class RewardsController extends GetxController {
       currentWeekMilestone.value = _rewardsBox?.get('currentWeekMilestone', defaultValue: 0) ?? 0;
       
       // Load power-up inventory
-      hintPowerUps.value = _rewardsBox?.get('hintPowerUps', defaultValue: 0) ?? 0;
-      freezePowerUps.value = _rewardsBox?.get('freezePowerUps', defaultValue: 0) ?? 0;
-      lifePowerUps.value = _rewardsBox?.get('lifePowerUps', defaultValue: 0) ?? 0;
+      hintPowerUps.value = _rewardsBox?.get('hintPowerUps');
+      freezePowerUps.value = _rewardsBox?.get('freezePowerUps');
+      lifePowerUps.value = _rewardsBox?.get('lifePowerUps');
+
+      // First run check - if null, set defaults
+      if (hintPowerUps.value == null || freezePowerUps.value == null || lifePowerUps.value == null) {
+        hintPowerUps.value = 2; // Default starting hints
+        freezePowerUps.value = 1; // Default starting freezes
+        lifePowerUps.value = 1; // Default starting lives
+        _saveData();
+      }
       
       // Check if streak should reset
       _checkDailyStreak();
     } catch (e) {
       // Use defaults
+      print('Error loading rewards data: $e');
     }
   }
   
