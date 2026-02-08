@@ -7,7 +7,7 @@ import 'core/themes/theme_controller.dart';
 import 'core/themes/light/light_theme.dart';
 import 'core/themes/dark/dark_theme.dart';
 import 'features/splash/controllers/splash_controller.dart';
-import 'features/splash/controllers/splash_controller.dart';
+
 import 'features/splash/views/splash_view.dart';
 import 'features/dashboard/controllers/rewards_controller.dart';
 import 'features/store/controllers/store_controller.dart';

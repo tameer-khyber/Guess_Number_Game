@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 /// Model for achievement data
 class Achievement {
@@ -45,6 +46,18 @@ class ProfileController extends GetxController {
   final RxInt totalScore = 0.obs;
   final RxString avgTime = '0s'.obs;
   final RxInt rank = 0.obs; // Rank is dynamic from LeaderboardController
+  
+  // Edit mode
+  final RxBool isEditing = false.obs;
+  final RxString editName = ''.obs;
+  final RxString editEmail = ''.obs;
+  
+  // Modal states
+  final RxBool showStatsModal = false.obs;
+  final RxBool showLogoutConfirm = false.obs;
+  
+  // Achievements list
+  final RxList<Achievement> achievements = <Achievement>[].obs;
   
   // Storage
   Box? _profileBox;
