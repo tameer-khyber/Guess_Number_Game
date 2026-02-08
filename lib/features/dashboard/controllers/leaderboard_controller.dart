@@ -125,10 +125,12 @@ class LeaderboardController extends GetxController {
       }
     }
     
-    // 3. Get user's name
+    // 3. Get user's name and score
     String userName = 'You';
+    int userScore = 0;
     try {
       final profileController = Get.find<ProfileController>();
+      userScore = profileController.totalScore.value;
       userName = profileController.playerName.value;
     } catch (e) {
       // Profile controller not found
@@ -148,10 +150,10 @@ class LeaderboardController extends GetxController {
     }
     
     // Add user if they have a score
-    if (userBestScore.value > 0) {
+    if (userScore > 0) {
       allPlayers.add({
         'username': userName,
-        'score': userBestScore.value,
+        'score': userScore,
         'avatar': '🎮',
         'isUser': true,
       });
@@ -262,13 +264,9 @@ class LeaderboardController extends GetxController {
      return players;
   }
   
-  /// Update user's score (called from game)
-  void updateUserScore(int newScore) {
-    if (newScore > userBestScore.value) {
-      userBestScore.value = newScore;
-      _saveUserScore();
-      _buildLeaderboard();
-    }
+  /// Update leaderboard (called when game ends)
+  void refreshLeaderboard() {
+    _buildLeaderboard();
   }
   
   /// Navigate back

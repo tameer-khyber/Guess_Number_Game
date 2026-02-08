@@ -15,7 +15,7 @@ class DashboardController extends GetxController {
   
   // Currency is still managed here as source of truth for now, or could move to Profile
   // Keeping currency here as per previous strict instruction, but good to know
-  final RxInt currency = 2500.obs; 
+  final RxInt currency = 0.obs;
   
   // Stats - from ProfileController
   RxInt get totalGames => Get.find<ProfileController>().gamesPlayed;

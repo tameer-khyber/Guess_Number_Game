@@ -68,9 +68,9 @@ class RewardsController extends GetxController {
       currentWeekMilestone.value = _rewardsBox?.get('currentWeekMilestone', defaultValue: 0) ?? 0;
       
       // Load power-up inventory
-      hintPowerUps.value = _rewardsBox?.get('hintPowerUps');
-      freezePowerUps.value = _rewardsBox?.get('freezePowerUps');
-      lifePowerUps.value = _rewardsBox?.get('lifePowerUps');
+      hintPowerUps.value = _rewardsBox?.get('hintPowerUps', defaultValue: 0) ?? 0;
+      freezePowerUps.value = _rewardsBox?.get('freezePowerUps', defaultValue: 0) ?? 0;
+      lifePowerUps.value = _rewardsBox?.get('lifePowerUps', defaultValue: 0) ?? 0;
 
       // First run check - if null, set defaults
       if (hintPowerUps.value == null || freezePowerUps.value == null || lifePowerUps.value == null) {

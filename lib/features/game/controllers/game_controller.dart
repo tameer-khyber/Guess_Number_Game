@@ -137,7 +137,7 @@ class GameController extends GetxController {
     // Update leaderboard with current score
     try {
       final leaderboardController = Get.find<LeaderboardController>();
-      leaderboardController.updateUserScore(score.value);
+      leaderboardController.refreshLeaderboard();
     } catch (e) {
       // Leaderboard controller not initialized yet
     }
@@ -236,6 +236,7 @@ class GameController extends GetxController {
   /// Start new game
   void handleNewGame() {
     _generateNewTarget();
+    score.value = 0;
     currentGuess.value = '';
     hint.value = null;
     lastGuess.value = null;
